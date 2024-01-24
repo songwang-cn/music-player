@@ -87,6 +87,7 @@ function onPlay() {
     initPlayTimer()
   } else {
     musicAudio.pause()
+    clearPlayTimer()
   }
 }
 
@@ -176,7 +177,7 @@ function getMusicTimeString(seconds: number) {
 }
 
 function fillString(num: number) {
-  return num > 10 ? num : '0' + num
+  return num >= 10 ? num : '0' + num
 }
 
 </script>
