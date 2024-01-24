@@ -1,0 +1,13 @@
+body{
+    padding: 0;
+    margin: 0;
+}
+
+button{
+    margin-left: 7px;
+}
+
+::-webkit-scrollbar {
+    width: 1px;
+    height: 1px;
+  }

@@ -1,0 +1,117 @@
+/*
+ * @Author: songwang 112054945@qq.com
+ * @Date: 2023-08-17 14:58:25
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2023-08-27 10:04:20
+ * @FilePath: \VueJS\src\assets\css\main.scss
+ */
+@import "./reset.css";
+@import "./var.scss";
+@import "../iconfont/iconfont.css";
+@import './animation.scss';
+@import './vantRewrite.scss';
+
+[theme="dark"] {
+  background-color: red;
+}
+
+[theme="light"] {
+  background-color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  /*对垂直流动条有效*/
+  height: 6px;
+  /*对水平流动条有效*/
+}
+
+::-webkit-scrollbar-track {
+  /* background-color: transparent; */
+  border-radius: 10px;
+}
+
+/*定义滑块颜色、内阴影及圆角*/
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: transparent;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background-color: rgba($color: #000, $alpha: 0.5);
+}
+
+
+/*定义两端按钮的样式*/
+
+::-webkit-scrollbar-button {
+  background-color: transparent;
+}
+
+/*定义右下角汇合处的样式*/
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.main {
+  position: absolute;
+  border-radius: 10px;
+  // transform-origin:50% 90%;
+  animation: dialog-in forwards 400ms ease-in-out;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 50px #525252;
+  backdrop-filter: blur(8px);
+
+  &.full-screen {
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0;
+  }
+
+  .top {
+    user-select: none;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba($color: #fff, $alpha: 0.9);
+    align-items: center;
+
+    .action {
+      font-size: 20px;
+      display: inline-block;
+      margin-left: 10px;
+      cursor: pointer;
+      transition: 200ms;
+
+      &:hover {
+        transform: scale(1.1);
+        background-color: #333333;
+        color: #fff;
+      }
+    }
+  }
+
+  .body {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color: rgba($color: #fff, $alpha: 0.7);
+  }
+
+  .footer {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: rgba($color: #fff, $alpha: 0.7);
+  }
+}

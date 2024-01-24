@@ -1,0 +1,58 @@
+/* 弹窗动画开始 */
+.dialog-enter-active {
+    animation: dialog-in 0.3s;
+}
+
+.dialog-leave-active {
+    animation: dialog-out 0.3s;
+}
+
+@keyframes menu-open {
+    0% {
+        opacity: 0;
+        transform: scale(1, 0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1, 1);
+    }
+}
+
+@keyframes dialog-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes dialog-out {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(.8);
+    }
+}
+
+@keyframes shake-in {
+    0% {
+        transform: scale(1, 1);
+    }
+
+    50% {
+        transform: scale(1.01, 1.01);
+    }
+
+    100% {
+        transform: scale(1, 1);
+    }
+}
