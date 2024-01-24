@@ -1,14 +1,17 @@
-# VueJS-with-Vite
+# music-player
 
-Vue.js 是基于 JavaScript 构建用户界面的库。该模板使用 Vite 来提供应用程序服务。
+music-player 是基于 Vue3+vite+ts开发的音乐播放器，支持web端和移动端。
 
-## 推荐的IDE设置
+[传送门](https://song-wang.gitee.io/music-player/#/)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## 自定义配置
-
-请参阅 [[Vite配置参考](https://vitejs.dev/config/).
+![主页](src/assets/img/intro/h5-1.png)
+![播放列表](src/assets/img/intro/h5-2.png)
+![音乐搜索](src/assets/img/intro/h5-3.png)
+![音乐列表](src/assets/img/intro/h5-4.png)
+![主页](src/assets/img/intro/web-1.png)
+![播放列表](src/assets/img/intro/web-2.png)
+![音乐搜索](src/assets/img/intro/web-3.png)
+![音乐列表](src/assets/img/intro/web-4.png)
 
 ## 项目设置
 
