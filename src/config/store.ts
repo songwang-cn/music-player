@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { MusicEntity } from '@/entity/MusicEntity'
 import { showToast } from 'vant'
 import { tokens } from '@/request/config'
+import { PlayMode, PlayModeRecord } from './enum'
+import { AppConfig } from '@/AppConfig'
 
 function getLastMusicObjFromStorage(): any {
     const entity = new MusicEntity()
@@ -30,7 +32,8 @@ export const appStore = defineStore('app' ,{
         lastBgUrl: localStorage.getItem('lastBgUrl') || new URL(`@/assets/img/wallPaper/bg.webp`, import.meta.url).href,
         lastMusicObj: getLastMusicObjFromStorage() || new MusicEntity(),
         historyMusicList: getHistoryMusicList() || [],
-        tokenIndex: Number(localStorage.getItem('tokenIndex') || 0)
+        tokenIndex: Number(localStorage.getItem('tokenIndex') || 0),
+        playMode: localStorage.getItem('playMode') || PlayMode.LIST,  //1-顺序播放 2-单曲循环
     }),
     actions: {
         setBgUrl(url: string){
@@ -71,6 +74,19 @@ export const appStore = defineStore('app' ,{
             }else{
                 this.tokenIndex = 0
             }
+        },
+        changePlayMode() {
+            if(this.playMode === PlayMode.LIST) {
+                this.playMode = PlayMode.LOOP
+            }else{
+                this.playMode = PlayMode.LIST
+            }
+            AppConfig.Audio.setLoop(this.playMode === PlayMode.LOOP)
+            showToast({
+                type: 'success',
+                message: `已切换为${PlayModeRecord[this.playMode as PlayMode]}`
+            })
+            localStorage.setItem('playMode', this.playMode)
         }
     }
 })

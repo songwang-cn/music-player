@@ -1,71 +1,121 @@
 <template>
-  <div class="music" :style="{
-    backgroundImage: `url(${appStore().bgUrl})`
-  }">
+  <div
+    class="music"
+    :style="{
+      backgroundImage: `url(${appStore().bgUrl})`
+    }"
+  >
     <div class="music-content">
       <div class="top-bar">
-        <div class="bar-item" @click="openTodoList">
-          <div class="iconfont icon-liebiao" />
-          <div class="bar-t">播放列表</div>
-        </div>
-        <div class="bar-item" @click="UseRandomBg">
+        <div
+          class="bar-item"
+          @click="UseRandomBg"
+        >
           <i class="iconfont icon-dongtaibizhi" />
-          <div class="bar-t">随机背景</div>
+          <div class="bar-t">
+            随机背景
+          </div>
         </div>
-        <div class="bar-item" @click="openSearchPanel">
+        <div
+          class="bar-item"
+          @click="openSearchPanel"
+        >
           <i class="iconfont icon-sousuo" />
-          <div class="bar-t">歌曲搜索</div>
+          <div class="bar-t">
+            歌曲搜索
+          </div>
         </div>
       </div>
-      <div class="music-top" :key="MusicObj.id">
-        <div :class="[
-          'music-pic',
-          isPlaying && 'playing'
-        ]">
-          <van-image :class="isPlaying ? 'playing' : 'pause'" class="music_img" :src="MusicObj.coverUrl" width="65%"
-            height="65%" />
+      <div
+        :key="MusicObj.id"
+        class="music-top"
+      >
+        <div
+          :class="[
+            'music-pic',
+            isPlaying && 'playing'
+          ]"
+        >
+          <van-image
+            :class="isPlaying ? 'playing' : 'pause'"
+            class="music_img"
+            :src="MusicObj.coverUrl"
+            width="65%"
+            height="65%"
+          />
           <div class="mask" />
         </div>
       </div>
       <div class="ctl">
-        <div class="song-name">{{ MusicObj.name }}&nbsp;-&nbsp;{{ MusicObj.singer }}</div>
+        <div class="song-name">
+          {{ MusicObj.name }}&nbsp;-&nbsp;{{ MusicObj.singer }}
+        </div>
         <div class="progress">
           <div class="time">
-
-            {{ getMusicTimeString(musicAudio.getDuration()) }}
+            {{ getMusicTimeString(AppConfig.Audio.getDuration()) }}
           </div>
-          <van-slider v-model="progress" @change="onProgressChange" />
+          <van-slider
+            v-model="progress"
+            @change="onProgressChange($event)"
+          />
           <div class="time">
             {{ getMusicTimeString(MusicObj.dt / 1000) }}
           </div>
         </div>
         <div class="act">
-          <i class="music-ctrl iconfont icon-shixin-shangyishou" @click="onPre" />
-          <i :class="['music-ctrl iconfont', isPlaying ? 'icon-zanting' : 'icon-zantingbofang']" @click="onPlay" />
-          <i class="music-ctrl iconfont icon-shixin-shangyishou" @click="onNext" style="transform: rotate(180deg);" />
+          <i
+            class="iconfont"
+            :class="appStore().playMode === PlayMode.LIST ? 'icon-shunxubofang' : 'icon-danquxunhuan'"
+            @click="appStore().changePlayMode()"
+          />
+          <i
+            class="iconfont icon-shixin-shangyishou"
+            @click="switchSong(0)"
+          />
+          <i
+            class="iconfont"
+            :class="isPlaying ? 'icon-zanting' : 'icon-zantingbofang'"
+            @click="onPlay"
+          />
+          <i
+            class="iconfont icon-shixin-shangyishou"
+            style="transform: rotate(180deg);"
+            @click="switchSong(1)"
+          />
+          <i
+            class="iconfont icon-bofangliebiao"
+            @click="openMusicList"
+          />
         </div>
       </div>
     </div>
 
-    <Search v-model="searchPanelIsOpen" @on-play="playSong" />
-    <HistoryList v-model="showToDoList" :music-obj="MusicObj" @on-play="playSong" @on-next="onNext"
-      :is-playing="isPlaying" />
-
+    <Search
+      v-model="searchPanelIsOpen"
+      @on-play="playSong"
+    />
+    <HistoryList
+      v-model="showToDoList"
+      :music-obj="MusicObj"
+      :is-playing="isPlaying"
+      @on-play="playSong"
+      @on-next="switchSong(1)"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import { MusicAudio } from "@/musicAudio/index";
-import { appStore } from "@/config/store"
-import Search from "./search.vue";
-import HistoryList from "./historyList.vue";
-import { SRequest } from "@/request";
-import HttpUrl from "@/request/HttpUrl";
-import { tokens } from '@/request/config'
-import { showToast } from "vant";
-import { UseRandomBg } from "@/use/UseRandomBg";
-
+import { ref } from 'vue'
+import { showToast } from 'vant'
+import { appStore } from '@/config/store'
+import Search from './search.vue'
+import HistoryList from './historyList.vue'
+import { SRequest } from '@/request'
+import HttpUrl from '@/request/HttpUrl'
+import { token } from '@/request/config'
+import { UseRandomBg } from '@/use/UseRandomBg'
+import { PlayMode } from '@/config/enum'
+import { AppConfig } from '@/AppConfig'
 
 const searchPanelIsOpen = ref(false)
 
@@ -75,7 +125,7 @@ function openSearchPanel() {
   searchPanelIsOpen.value = true
 }
 
-function openTodoList() {
+function openMusicList() {
   showToDoList.value = true
 }
 
@@ -85,20 +135,25 @@ const progress = ref(0)
 
 const MusicObj = ref(appStore().lastMusicObj)
 
-console.log(MusicObj.value)
+console.log('上一次播放的歌曲信息', MusicObj.value)
 
-const musicAudio = new MusicAudio().setUrl(MusicObj.value.url)
+AppConfig.Audio
+  .setUrl(MusicObj.value.url)
+  .setLoop(appStore().playMode === PlayMode.LOOP)
 
-musicAudio.onEnded(() => {
+AppConfig.Audio.onEnded(() => {
   console.log('当前歌曲播放完毕')
   setTimeout(() => {
-    onNext()
-  }, 1000)
+    if (appStore().playMode === PlayMode.LIST) {
+      switchSong(1)
+      console.log('下一首')
+    }
+  }, 500)
 })
 
 function onProgressChange(num: number) {
   clearPlayTimer()
-  musicAudio.setCurrentTime(num / 100 * MusicObj.value.dt / 1000)
+  AppConfig.Audio.setCurrentTime(num / 100 * MusicObj.value.dt / 1000)
   initPlayTimer()
 }
 
@@ -108,46 +163,44 @@ function onPlay() {
   }
   isPlaying.value = !isPlaying.value
   if (isPlaying.value) {
-    musicAudio.play()
+    AppConfig.Audio.play()
     initPlayTimer()
   } else {
-    musicAudio.pause()
+    AppConfig.Audio.pause()
     clearPlayTimer()
   }
 }
 
-function onPre() {
+function switchSong(type: number) {
   isPlaying.value = false
+  progress.value = 0
   const historyList = appStore().historyMusicList
   if (!historyList.length) {
     return showToast('播放列表为空')
   }
-  const currentIndex = historyList.findIndex(v => v.id === MusicObj.value.id)
-  if (currentIndex === 0) {
-    playSong(historyList[historyList.length - 1])
-  } else {
-    playSong(historyList[currentIndex - 1])
-  }
-}
-
-function onNext() {
-  isPlaying.value = false
-  const historyList = appStore().historyMusicList
-  if (!historyList.length) {
-    return showToast('播放列表为空')
-  }
-  const currentIndex = historyList.findIndex(v => v.id === MusicObj.value.id)
-  if (currentIndex < historyList.length - 1) {
-    playSong(historyList[currentIndex + 1])
-  } else {
-    playSong(historyList[0])
+  const currentIndex = historyList.findIndex((v) => v.id === MusicObj.value.id)
+  switch (type) {
+    // 上一首
+    case 0:
+      if (currentIndex === 0) {
+        playSong(historyList[historyList.length - 1])
+      } else {
+        playSong(historyList[currentIndex - 1])
+      }
+      break
+    // 下一首
+    case 1:
+      if (currentIndex < historyList.length - 1) {
+        playSong(historyList[currentIndex + 1])
+      } else {
+        playSong(historyList[0])
+      }
   }
 }
 
 async function getSongDetail(song: any) {
-
   const data = await new SRequest(HttpUrl.Music.Detail).post({
-    id: song.id
+    id: song.id,
   })
   /**
    * 设置音乐信息
@@ -160,16 +213,17 @@ async function getSongDetail(song: any) {
     .setName(songObj.name)
     .setCoverUrl(songObj.al.picUrl)
     .setDuration(songObj.dt)
-    .setSinger(songObj.ar.map(v => v.name).join(','))
+    .setSinger(songObj.ar.map((v: any) => v.name).join(','))
 }
 
 async function playSong(song: any) {
   if (song.id === MusicObj.value.id && isPlaying.value) {
-    return showToast('正在播放')
+    return showToast('正在播放这首歌')
   }
+  
   await getSongDetail(song)
 
-  const playUrl = `${HttpUrl.Music.PlayUrl}?id=${song.id}&token=${tokens[appStore().tokenIndex]}`
+  const playUrl = `${HttpUrl.Music.PlayUrl}?id=${song.id}&token=${token.value}`
   /**
   * 设置音乐信息
   * @param id
@@ -179,7 +233,7 @@ async function playSong(song: any) {
     .setId(song.id)
     .setUrl(playUrl)
 
-  musicAudio.setUrl(playUrl).play()
+  AppConfig.Audio.setUrl(playUrl).play()
   appStore().setLastMusicObj(MusicObj.value)
   isPlaying.value = true
   initPlayTimer()
@@ -190,7 +244,7 @@ const playTimer = ref(null as any)
 function initPlayTimer() {
   clearPlayTimer()
   playTimer.value = setInterval(() => {
-    progress.value = musicAudio.getDuration() * 1000 / MusicObj.value.dt * 100
+    progress.value = AppConfig.Audio.getDuration() * 1000 / MusicObj.value.dt * 100
   }, 1000)
 }
 
@@ -204,7 +258,7 @@ function getMusicTimeString(seconds: number) {
 }
 
 function fillString(num: number) {
-  return num >= 10 ? num : '0' + num
+  return num >= 10 ? num : `0${num}`
 }
 
 </script>
@@ -285,7 +339,6 @@ function fillString(num: number) {
           transform: rotate(-90deg);
         }
 
-
         &.playing {
           &::after {
             opacity: 1;
@@ -343,7 +396,7 @@ function fillString(num: number) {
 
     .ctl {
       height: 20%;
-      width: 65%;
+      width: 75%;
       margin: 30px auto;
 
       .song-name {
@@ -357,8 +410,7 @@ function fillString(num: number) {
       }
 
       .progress {
-        width: 100%;
-        padding: 30px 0;
+        padding: 35px;
         display: flex;
         align-items: center;
         position: relative;
@@ -369,11 +421,11 @@ function fillString(num: number) {
           position: absolute;
 
           &:nth-child(1) {
-            left: -40px;
+            left: -10px;
           }
 
           &:last-child {
-            right: -40px;
+            right: -10px;
           }
         }
       }

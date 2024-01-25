@@ -1,3 +1,6 @@
+import { PlayMode } from "@/config/enum"
+import { appStore } from "@/config/store"
+
 export class MusicAudio{
 
     audio: HTMLAudioElement
@@ -10,6 +13,7 @@ export class MusicAudio{
 
     setUrl(url: string) {
         this.audio.src = url
+        this.setCurrentTime(0)
         return this
     }
 
@@ -32,5 +36,10 @@ export class MusicAudio{
 
     onEnded(callback: any) {
         this.audio.onended = callback
+    }
+
+    setLoop(loop: boolean) {
+        this.audio.loop = loop
+        return this
     }
 }

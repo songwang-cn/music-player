@@ -1,7 +1,7 @@
 <template>
     <van-popup round :overlay-style="{ background: 'none' }" v-model:show="show" :position="isPc ? 'right' : 'bottom'"
         :style="{
-            width: isPc ? '40%' : '100%',
+            width: isPc ? '400px' : '100%',
             height: isPc ? '100%' : '90%',
         }">
         <div class="pop-panel">
@@ -99,6 +99,7 @@ const pageSize = ref(30)
 const totalCount = ref(0)
 
 async function onSearch() {
+    // await fetch(HttpUrl.Music.Rank)
     const data = await new SRequest(HttpUrl.Music.Search).post({
         keyword: keyword.value,
         page: currentPage.value,

@@ -1,5 +1,5 @@
 import { showToast } from "vant"
-import { tokens } from './config'
+import { token } from './config'
 import { appStore } from "@/config/store"
 
 export class SRequest {
@@ -38,7 +38,7 @@ export class SRequest {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                token: tokens[appStore().tokenIndex],
+                token: token.value,
                 ...params
 
             })
