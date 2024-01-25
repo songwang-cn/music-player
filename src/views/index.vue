@@ -397,7 +397,7 @@ function fillString(num: number) {
     .ctl {
       height: 30%;
       width: 75%;
-      margin: 30px auto;
+      margin: 10px auto;
 
       .song-name {
         width: 100%;
