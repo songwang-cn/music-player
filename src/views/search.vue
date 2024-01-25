@@ -44,6 +44,7 @@ import { artist } from './config'
 import { appStore } from "@/config/store";
 import { MusicEntity } from "@/entity/MusicEntity";
 import { showToast } from "vant";
+import Axios from 'axios'
 
 const { isPc } = UseIsPc()
 
@@ -94,13 +95,19 @@ const pageSize = ref(30)
 const totalCount = ref(0)
 
 async function onSearch() {
-    const data = await new SRequest(HttpUrl.Music.Search).post({
-        keyword: keyword.value,
-        page: currentPage.value,
-        limit: pageSize.value,
-    })
-    songList.value = data.songs
-    totalCount.value = data.songCount
+    const data = await Axios('/api/search/get/web?s=en&type=1&limit=30&total=true&offset=2')
+
+    console.log(data)
+
+
+
+    /*  const data = await new SRequest(HttpUrl.Music.Search).get({
+         keyword: keyword.value,
+         page: currentPage.value,
+         limit: pageSize.value,
+     })
+     songList.value = data.songs
+     totalCount.value = data.songCount */
 }
 
 function onPageChange(page: number) {
@@ -150,7 +157,7 @@ function onPageChange(page: number) {
             padding: 10px;
             transform: scale(.9);
             background-color: #ea3e3c;
-            color: #ddd;
+            color: #ffffff;
             font-size: 12px;
             display: flex;
             align-items: center;

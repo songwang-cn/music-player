@@ -8,6 +8,7 @@
     "lint": "eslint --ext .ts,.vue src"
   },
   "dependencies": {
+    "axios": "^1.6.5",
     "pinia": "^2.1.6",
     "sass": "^1.66.1",
     "sass-loader": "^13.3.2",

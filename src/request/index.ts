@@ -15,9 +15,9 @@ export class SRequest {
         this.method = method
     }
 
-    async get(params: Record<string, any>) {
+    async get(params: Record<string, any>): Promise<any> {
         this.setMethod('GET')
-        this.onRequest(params)
+        return this.onRequest(params)
     }
 
     async post(params: Record<string, any>): Promise<any> {
@@ -31,17 +31,30 @@ export class SRequest {
             message: '加载中...',
             duration: 2
         })
-        const res = await fetch(this.url, {
-            method: this.method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                token,
-                ...params
-            })
-        })
-        const json = await res.json()
+        let result
+        switch (this.method) {
+            case 'GET':
+                result = await fetch(this.url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                break
+            case 'POST':
+                result = await fetch(this.url, {
+                    method: this.method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        token,
+                        ...params
+                    })
+                })
+                break
+        }
+        
+        const json = await result?.json()
         return json.data
     }
 }
