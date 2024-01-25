@@ -12,7 +12,7 @@
                     <div class="item" v-for="item of artist" @click="keyword = item.name; onSearch()">{{ item.name }}</div>
                 </div>
                 <div v-if="songList.length" class="song-list">
-                    <div v-for="song of songList" class="item" @click="emits('onPlay', song); show = false">
+                    <div v-for="song of songList" class="item" @click="onPlay(song)">
                         <div class="left">
                             <div class="name">
                                 {{ song.name }}&nbsp;&nbsp;&nbsp;
@@ -20,7 +20,7 @@
                             </div>
                         </div>
                         <div class="action">
-                            <i @click.stop="emits('onPlay', song); show = false" class="iconfont icon-bofang" />
+                            <i @click.stop="onPlay(song)" class="iconfont icon-bofang" />
                             <i @click.stop="addInToDoList(song)" class="iconfont icon-tianjiadingdan1" />
                         </div>
                     </div>
@@ -44,7 +44,6 @@ import { artist } from './config'
 import { appStore } from "@/config/store";
 import { MusicEntity } from "@/entity/MusicEntity";
 import { showToast } from "vant";
-import Axios from 'axios'
 
 const { isPc } = UseIsPc()
 
@@ -66,6 +65,11 @@ const emits = defineEmits(['onPlay', 'update:modelValue'])
 watch(() => show.value, (val) => {
     emits('update:modelValue', val)
 })
+
+function onPlay(song: any) {
+    emits('onPlay', song)
+    show.value = false
+}
 
 async function addInToDoList(song: any) {
 
@@ -95,19 +99,13 @@ const pageSize = ref(30)
 const totalCount = ref(0)
 
 async function onSearch() {
-    const data = await Axios('https://music.163.com/api/search/get/web?s=en&type=1&limit=30&total=true&offset=2')
-
-    console.log(data)
-
-
-
-    /*  const data = await new SRequest(HttpUrl.Music.Search).get({
-         keyword: keyword.value,
-         page: currentPage.value,
-         limit: pageSize.value,
-     })
-     songList.value = data.songs
-     totalCount.value = data.songCount */
+    const data = await new SRequest(HttpUrl.Music.Search).post({
+        keyword: keyword.value,
+        page: currentPage.value,
+        limit: pageSize.value,
+    })
+    songList.value = data.songs
+    totalCount.value = data.songCount
 }
 
 function onPageChange(page: number) {
@@ -129,7 +127,7 @@ function onPageChange(page: number) {
 
     .pop-t {
         text-align: center;
-        color: #ddd;
+        color: #fff;
         padding: 20px;
         font-size: 16px;
     }
@@ -157,7 +155,7 @@ function onPageChange(page: number) {
             padding: 10px;
             transform: scale(.9);
             background-color: #ea3e3c;
-            color: #ffffff;
+            color: #fff;
             font-size: 12px;
             display: flex;
             align-items: center;
@@ -184,7 +182,7 @@ function onPageChange(page: number) {
 
         .item {
             padding: 15px 5px;
-            color: #ddd;
+            color: #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -211,7 +209,7 @@ function onPageChange(page: number) {
     }
 
     :deep(.van-pagination__page-desc) {
-        color: #3b3b3b;
+        color: #eee;
     }
 
     :deep(.van-empty__description) {

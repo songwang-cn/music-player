@@ -1,5 +1,6 @@
 import { showToast } from "vant"
-import { token } from './config'
+import { tokens } from './config'
+import { appStore } from "@/config/store"
 
 export class SRequest {
 
@@ -15,7 +16,7 @@ export class SRequest {
         this.method = method
     }
 
-    async get(params: Record<string, any>): Promise<any> {
+    async get(params: Record<string, any>) {
         this.setMethod('GET')
         return this.onRequest(params)
     }
@@ -31,30 +32,19 @@ export class SRequest {
             message: '加载中...',
             duration: 2
         })
-        let result
-        switch (this.method) {
-            case 'GET':
-                result = await fetch(this.url, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                break
-            case 'POST':
-                result = await fetch(this.url, {
-                    method: this.method,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        token,
-                        ...params
-                    })
-                })
-                break
-        }
-        
-        const json = await result?.json()
+        const res = await fetch(this.url, {
+            method: this.method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: tokens[appStore().tokenIndex],
+                ...params
+
+            })
+        })
+        appStore().changeTokenIndex()
+        const json = await res.json()
         return json.data
     }
 }

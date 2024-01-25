@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { MusicEntity } from '@/entity/MusicEntity'
 import { showToast } from 'vant'
+import { tokens } from '@/request/config'
 
 function getLastMusicObjFromStorage(): any {
     const entity = new MusicEntity()
@@ -28,7 +29,8 @@ export const appStore = defineStore('app' ,{
         bgUrl: localStorage.getItem('bgUrl') || new URL(`@/assets/img/wallPaper/bg.webp`, import.meta.url).href,
         lastBgUrl: localStorage.getItem('lastBgUrl') || new URL(`@/assets/img/wallPaper/bg.webp`, import.meta.url).href,
         lastMusicObj: getLastMusicObjFromStorage() || new MusicEntity(),
-        historyMusicList: getHistoryMusicList() || []
+        historyMusicList: getHistoryMusicList() || [],
+        tokenIndex: Number(localStorage.getItem('tokenIndex') || 0)
     }),
     actions: {
         setBgUrl(url: string){
@@ -62,6 +64,13 @@ export const appStore = defineStore('app' ,{
                 type: 'success',
                 message: '删除成功'
             })
+        },
+        changeTokenIndex() {
+            if(this.tokenIndex < tokens.length - 1){
+                this.tokenIndex += 1
+            }else{
+                this.tokenIndex = 0
+            }
         }
     }
 })

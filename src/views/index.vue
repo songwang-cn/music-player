@@ -4,17 +4,17 @@
   }">
     <div class="music-content">
       <div class="top-bar">
-        <div class="bar-item">
-          <div class="iconfont icon-liebiao" @click="openTodoList" />
-          <div class="bar-t">列表</div>
+        <div class="bar-item" @click="openTodoList">
+          <div class="iconfont icon-liebiao" />
+          <div class="bar-t">播放列表</div>
         </div>
-        <div class="bar-item">
-          <i class="iconfont icon-dongtaibizhi" @click="UseRandomBg" />
-          <div class="bar-t">背景</div>
+        <div class="bar-item" @click="UseRandomBg">
+          <i class="iconfont icon-dongtaibizhi" />
+          <div class="bar-t">随机背景</div>
         </div>
-        <div class="bar-item">
-          <i class="iconfont icon-sousuo" @click="openSearchPanel" />
-          <div class="bar-t">搜索</div>
+        <div class="bar-item" @click="openSearchPanel">
+          <i class="iconfont icon-sousuo" />
+          <div class="bar-t">歌曲搜索</div>
         </div>
       </div>
       <div class="music-top" :key="MusicObj.id">
@@ -62,7 +62,7 @@ import Search from "./search.vue";
 import HistoryList from "./historyList.vue";
 import { SRequest } from "@/request";
 import HttpUrl from "@/request/HttpUrl";
-import { token } from '@/request/config'
+import { tokens } from '@/request/config'
 import { showToast } from "vant";
 import { UseRandomBg } from "@/use/UseRandomBg";
 
@@ -169,7 +169,7 @@ async function playSong(song: any) {
   }
   await getSongDetail(song)
 
-  const playUrl = `${HttpUrl.Music.PlayUrl}?id=${song.id}&token=${token}`
+  const playUrl = `${HttpUrl.Music.PlayUrl}?id=${song.id}&token=${tokens[appStore().tokenIndex]}`
   /**
   * 设置音乐信息
   * @param id
@@ -238,6 +238,11 @@ function fillString(num: number) {
         text-align: center;
         font-size: 12px;
         color: #fff;
+        transition: 300ms;
+
+        &:active {
+          transform: scale(.9);
+        }
 
         .bar-t {
           padding-top: 3px;
@@ -245,7 +250,7 @@ function fillString(num: number) {
       }
 
       .iconfont {
-        font-size: 24px;
+        font-size: 30px;
       }
     }
 
