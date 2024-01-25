@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { MusicEntity } from '@/entity/MusicEntity'
+import { showToast } from 'vant'
 
 function getLastMusicObjFromStorage(): any {
     const entity = new MusicEntity()
@@ -24,10 +25,21 @@ function getHistoryMusicList() {
 
 export const appStore = defineStore('app' ,{
     state: () => ({
+        bgUrl: localStorage.getItem('bgUrl') || new URL(`@/assets/img/wallPaper/bg.webp`, import.meta.url).href,
+        lastBgUrl: localStorage.getItem('lastBgUrl') || new URL(`@/assets/img/wallPaper/bg.webp`, import.meta.url).href,
         lastMusicObj: getLastMusicObjFromStorage() || new MusicEntity(),
         historyMusicList: getHistoryMusicList() || []
     }),
     actions: {
+        setBgUrl(url: string){
+            this.bgUrl = url
+            localStorage.setItem('bgUrl', this.bgUrl)
+            this.setLastBgUrl(this.bgUrl)
+        },
+        setLastBgUrl(url: string){
+            this.lastBgUrl = url
+            localStorage.setItem('lastBgUrl', this.lastBgUrl)
+        },
         setLastMusicObj(music: MusicEntity) {
             this.addMusicToHistory(JSON.parse(JSON.stringify(music)))
             this.lastMusicObj = music
@@ -36,8 +48,20 @@ export const appStore = defineStore('app' ,{
         addMusicToHistory(music: MusicEntity) {
             if(!this.historyMusicList.some((item: MusicEntity) => item.id === music.id)){
                 this.historyMusicList.push(music)
-                localStorage.setItem('historyMusicList', JSON.stringify(this.historyMusicList))
+            }else{
+                const entity = this.historyMusicList.find((item: MusicEntity) => item.id === music.id)
+                entity?.setId(music.id).setName(music.name).setCoverUrl(music.coverUrl).setUrl(music.url).setDuration(music.dt)
             }
+            localStorage.setItem('historyMusicList', JSON.stringify(this.historyMusicList))
+        },
+        deleteInHistory(music: MusicEntity) {
+            const list = this.historyMusicList.filter((item: MusicEntity) => item.id !== music.id)
+            this.historyMusicList = list
+            localStorage.setItem('historyMusicList', JSON.stringify(this.historyMusicList))
+            showToast({
+                type: 'success',
+                message: '删除成功'
+            })
         }
     }
 })

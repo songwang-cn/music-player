@@ -3,11 +3,11 @@ import DefaultCover from '@/assets/img/Jay.png'
 
 export class MusicEntity extends BaseEntity{
 
-    url?: string = ''
+    url: string = ''
 
-    coverUrl?: string = new URL(DefaultCover, import.meta.url).href
+    coverUrl: string = new URL(DefaultCover, import.meta.url).href
 
-    dt: number = 240000
+    dt: number = 0
 
     singer?:string
     

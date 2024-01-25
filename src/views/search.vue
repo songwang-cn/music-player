@@ -3,7 +3,6 @@
         :style="{
             width: isPc ? '40%' : '100%',
             height: isPc ? '100%' : '90%',
-            background: 'rgba(0,0,0,.7)'
         }">
         <div class="pop-panel">
             <div class="pop-t">音乐搜索</div>
@@ -13,12 +12,16 @@
                     <div class="item" v-for="item of artist" @click="keyword = item.name; onSearch()">{{ item.name }}</div>
                 </div>
                 <div v-if="songList.length" class="song-list">
-                    <div v-for="song of songList" class="item" @click="emits('onPlay', song)">
+                    <div v-for="song of songList" class="item" @click="emits('onPlay', song); show = false">
                         <div class="left">
-                            <div class="name">{{ song.name }}</div>
+                            <div class="name">
+                                {{ song.name }}&nbsp;&nbsp;&nbsp;
+                                {{ song.artists.map((v: any) => v.name).join(',') }}
+                            </div>
                         </div>
-                        <div class="singer">
-                            {{ song.artists.map((v: any) => v.name).join(',') }}
+                        <div class="action">
+                            <i @click.stop="emits('onPlay', song); show = false" class="iconfont icon-bofang" />
+                            <i @click.stop="addInToDoList(song)" class="iconfont icon-tianjiadingdan1" />
                         </div>
                     </div>
                 </div>
@@ -38,6 +41,9 @@ import { watch } from "vue";
 import { SRequest } from "@/request/index";
 import HttpUrl from "@/request/HttpUrl";
 import { artist } from './config'
+import { appStore } from "@/config/store";
+import { MusicEntity } from "@/entity/MusicEntity";
+import { showToast } from "vant";
 
 const { isPc } = UseIsPc()
 
@@ -59,6 +65,21 @@ const emits = defineEmits(['onPlay', 'update:modelValue'])
 watch(() => show.value, (val) => {
     emits('update:modelValue', val)
 })
+
+async function addInToDoList(song: any) {
+
+    const entity = new MusicEntity()
+        .setId(song.id)
+        .setName(song.name)
+        .setDuration(song.duration)
+        .setSinger(song.artists.map(v => v.name).join(','))
+
+    appStore().addMusicToHistory(entity)
+    showToast({
+        type: "success",
+        message: "已添加到播放列表"
+    })
+}
 
 
 
@@ -95,16 +116,15 @@ function onPageChange(page: number) {
     width: 100%;
     height: 100%;
     display: flex;
-    background-color: #fff;
+    background-color: #252323;
     display: flex;
     flex-direction: column;
 
     .pop-t {
         text-align: center;
-        color: #fff;
+        color: #ddd;
         padding: 20px;
         font-size: 16px;
-        color: #3b3b3b;
     }
 
     .content {
@@ -130,7 +150,7 @@ function onPageChange(page: number) {
             padding: 10px;
             transform: scale(.9);
             background-color: #ea3e3c;
-            color: #fff;
+            color: #ddd;
             font-size: 12px;
             display: flex;
             align-items: center;
@@ -153,32 +173,32 @@ function onPageChange(page: number) {
         flex: 1;
         overflow-y: auto;
         padding: 10px 0;
+        font-size: 14px;
 
         .item {
-            font-size: 15px;
-            padding: 18px 5px;
-            margin-bottom: 5px;
-            color: #3b3b3b;
+            padding: 15px 5px;
+            color: #ddd;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: 200ms;
 
-            &.current {
-                color: #ea3e3c;
-            }
-
             .left {
                 display: flex;
                 align-items: center;
+                flex: 1;
 
-                .name {
-                    padding-left: 10px;
+                &:hover {
+                    color: #ea3e3c;
                 }
             }
 
-            &:hover {
-                color: #ea3e3c;
+            .action {
+                .iconfont {
+                    color: #ea3e3c;
+                    font-weight: bold;
+                    padding: 0 10px;
+                }
             }
         }
     }

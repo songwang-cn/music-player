@@ -29,4 +29,8 @@ export class MusicAudio{
         this.audio.currentTime = time
         return this
     }
+
+    onEnded(callback: any) {
+        this.audio.onended = callback
+    }
 }

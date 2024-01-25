@@ -1,12 +1,14 @@
 <template>
     <van-popup :overlay-style="{ background: 'none' }" round v-model:show="show" :position="isPc ? 'left' : 'bottom'"
         :style="{
-            width: isPc ? '40%' : '100%',
-            height: isPc ? '100%' : '90%',
+            width: isPc ? '400px' : '100%',
+            height: '88%',
             background: 'rgba(0,0,0,.7)'
         }">
         <div class="pop-panel">
-            <div class="pop-t">播放列表</div>
+            <div class="pop-t">
+                播放列表
+            </div>
             <div class="content">
                 <div v-if="appStore().historyMusicList.length" class="song-list">
                     <div v-for="song of appStore().historyMusicList" :class="['item', musicObj.id == song.id && 'current']"
@@ -14,11 +16,11 @@
                         <div class="left">
                             <div class="name">
                                 <i class="iconfont icon-zhengzaibofang" v-if="musicObj.id == song.id && isPlaying" />
-                                {{ song.name }}
+                                {{ song.name }}&nbsp;&nbsp;{{ song.singer }}
                             </div>
                         </div>
-                        <div class="singer">
-                            {{ song.singer }}
+                        <div class="action">
+                            <i class="iconfont icon-shanchu1" @click.stop="onDelete(song)" />
                         </div>
                     </div>
                 </div>
@@ -59,11 +61,18 @@ watch(() => props.modelValue, (val) => {
     show.value = val
 })
 
-const emits = defineEmits(['onPlay', 'update:modelValue'])
+const emits = defineEmits(['onPlay', 'onNext', 'update:modelValue'])
 
 watch(() => show.value, (val) => {
     emits('update:modelValue', val)
 })
+
+function onDelete(song: MusicEntity) {
+    if (song.id === props.musicObj.id) {
+        emits('onNext')
+    }
+    appStore().deleteInHistory(song)
+}
 
 </script>
 
@@ -72,10 +81,10 @@ watch(() => show.value, (val) => {
     width: 100%;
     height: 100%;
     display: flex;
-    background-color: #fff;
+    background-color: #252323;
     display: flex;
     flex-direction: column;
-    color: #424242;
+    color: #ffffff;
 
     .pop-t {
         text-align: center;
@@ -104,18 +113,19 @@ watch(() => show.value, (val) => {
             font-size: 14px;
             padding: 15px;
             margin-bottom: 10px;
-            background: #f8f8f8;
-            border-radius: 10px;
+            border-radius: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: 200ms;
 
             &.current {
-                color: #ea3e3c;
+                background: #ea3e3c;
+                color: #fff;
             }
 
             .left {
+                flex: 1;
                 display: flex;
                 align-items: center;
 

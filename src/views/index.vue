@@ -1,11 +1,23 @@
 <template>
-  <div class="music">
+  <div class="music" :style="{
+    backgroundImage: `url(${appStore().bgUrl})`
+  }">
     <div class="music-content">
       <div class="top-bar">
-        <i class="iconfont icon-lishixiao" @click="openTodoList" />
-        <i class="iconfont icon-sousuo" @click="openSearchPanel" />
+        <div class="bar-item">
+          <div class="iconfont icon-liebiao" @click="openTodoList" />
+          <div class="bar-t">列表</div>
+        </div>
+        <div class="bar-item">
+          <i class="iconfont icon-dongtaibizhi" @click="UseRandomBg" />
+          <div class="bar-t">背景</div>
+        </div>
+        <div class="bar-item">
+          <i class="iconfont icon-sousuo" @click="openSearchPanel" />
+          <div class="bar-t">搜索</div>
+        </div>
       </div>
-      <div class="music-top">
+      <div class="music-top" :key="MusicObj.id">
         <div :class="[
           'music-pic',
           isPlaying && 'playing'
@@ -19,6 +31,7 @@
         <div class="song-name">{{ MusicObj.name }}&nbsp;-&nbsp;{{ MusicObj.singer }}</div>
         <div class="progress">
           <div class="time">
+
             {{ getMusicTimeString(musicAudio.getDuration()) }}
           </div>
           <van-slider v-model="progress" @change="onProgressChange" />
@@ -35,7 +48,8 @@
     </div>
 
     <Search v-model="searchPanelIsOpen" @on-play="playSong" />
-    <HistoryList v-model="showToDoList" :music-obj="MusicObj" @on-play="playSong" :is-playing="isPlaying"/>
+    <HistoryList v-model="showToDoList" :music-obj="MusicObj" @on-play="playSong" @on-next="onNext"
+      :is-playing="isPlaying" />
 
   </div>
 </template>
@@ -50,6 +64,7 @@ import { SRequest } from "@/request";
 import HttpUrl from "@/request/HttpUrl";
 import { token } from '@/request/config'
 import { showToast } from "vant";
+import { UseRandomBg } from "@/use/UseRandomBg";
 
 
 const searchPanelIsOpen = ref(false)
@@ -74,6 +89,13 @@ console.log(MusicObj.value)
 
 const musicAudio = new MusicAudio().setUrl(MusicObj.value.url)
 
+musicAudio.onEnded(() => {
+  console.log('当前歌曲播放完毕')
+  setTimeout(() => {
+    onNext()
+  }, 1000)
+})
+
 function onProgressChange(num: number) {
   clearPlayTimer()
   musicAudio.setCurrentTime(num / 100 * MusicObj.value.dt / 1000)
@@ -81,6 +103,9 @@ function onProgressChange(num: number) {
 }
 
 function onPlay() {
+  if (!MusicObj.value.url) {
+    return showToast('暂无音乐，点击右上角去搜索歌曲')
+  }
   isPlaying.value = !isPlaying.value
   if (isPlaying.value) {
     musicAudio.play()
@@ -130,14 +155,18 @@ async function getSongDetail(song: any) {
    * @param coverUrl
    * @param duration
    */
+  const songObj = data.songs[0]
   MusicObj.value
-    .setName(data.songs[0].name)
-    .setCoverUrl(data.songs[0].al.picUrl)
-    .setDuration(data.songs[0].dt)
-    .setSinger(data.songs[0].ar.map(v => v.name).join(','))
+    .setName(songObj.name)
+    .setCoverUrl(songObj.al.picUrl)
+    .setDuration(songObj.dt)
+    .setSinger(songObj.ar.map(v => v.name).join(','))
 }
 
 async function playSong(song: any) {
+  if (song.id === MusicObj.value.id && isPlaying.value) {
+    return showToast('正在播放')
+  }
   await getSongDetail(song)
 
   const playUrl = `${HttpUrl.Music.PlayUrl}?id=${song.id}&token=${token}`
@@ -161,9 +190,7 @@ const playTimer = ref(null as any)
 function initPlayTimer() {
   clearPlayTimer()
   playTimer.value = setInterval(() => {
-    console.log(musicAudio.getDuration(), MusicObj.value.dt)
     progress.value = musicAudio.getDuration() * 1000 / MusicObj.value.dt * 100
-    console.log(progress.value)
   }, 1000)
 }
 
@@ -188,7 +215,6 @@ function fillString(num: number) {
   position: fixed;
   inset: 0;
   cursor: pointer;
-  background: url('@/assets/img/wallPaper/bg.webp') no-repeat;
   background-size: cover;
   background-position: center center;
 
@@ -199,18 +225,27 @@ function fillString(num: number) {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    background-color: rgba(0, 0, 0, .1);
+    background: linear-gradient(#111, rgba(0, 0, 0, 0.1), #111);
 
     .top-bar {
-      height: 8%;
+      height: 5%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 0 20px;
+      padding: 20px;
+
+      .bar-item {
+        text-align: center;
+        font-size: 12px;
+        color: #fff;
+
+        .bar-t {
+          padding-top: 3px;
+        }
+      }
 
       .iconfont {
         font-size: 24px;
-        color: #fff;
       }
     }
 
