@@ -309,7 +309,7 @@ function fillString(num: number) {
     }
 
     .music-top {
-      height: 70%;
+      height: 60%;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -395,7 +395,7 @@ function fillString(num: number) {
     }
 
     .ctl {
-      height: 20%;
+      height: 30%;
       width: 75%;
       margin: 30px auto;
 
