@@ -14,13 +14,13 @@ export default defineConfig({
   server: {
     host: true,
     port: '1110',
-    proxy: {
+   /*  proxy: {
       '/api/': {
         target: 'https://music.163.com/api/',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, '')
       }
-    }
+    } */
   },
   plugins: [
     vue()

@@ -95,7 +95,7 @@ const pageSize = ref(30)
 const totalCount = ref(0)
 
 async function onSearch() {
-    const data = await Axios('/api/search/get/web?s=en&type=1&limit=30&total=true&offset=2')
+    const data = await Axios('https://music.163.com/api/search/get/web?s=en&type=1&limit=30&total=true&offset=2')
 
     console.log(data)
 
