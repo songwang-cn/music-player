@@ -275,18 +275,14 @@ function fillString(num: number) {
   .music-content {
     width: 100%;
     height: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
     background: linear-gradient(#111, rgba(0, 0, 0, 0.1), #111);
 
     .top-bar {
-      height: 5%;
+      height: 10%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px;
+      padding: 0 20px;
 
       .bar-item {
         text-align: center;
@@ -309,7 +305,7 @@ function fillString(num: number) {
     }
 
     .music-top {
-      height: 60%;
+      height: 55%;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -398,6 +394,9 @@ function fillString(num: number) {
       height: 30%;
       width: 75%;
       margin: 10px auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
 
       .song-name {
         width: 100%;
@@ -410,7 +409,7 @@ function fillString(num: number) {
       }
 
       .progress {
-        padding: 35px;
+        padding: 0 35px;
         display: flex;
         align-items: center;
         position: relative;
@@ -431,7 +430,6 @@ function fillString(num: number) {
       }
 
       .act {
-        padding: 30px 0;
         width: 100%;
         margin: 0 auto;
         display: flex;
