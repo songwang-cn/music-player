@@ -276,6 +276,7 @@ function fillString(num: number) {
     width: 100%;
     height: 100%;
     background: linear-gradient(#111, rgba(0, 0, 0, 0.1), #111);
+    overflow-y: auto;
 
     .top-bar {
       height: 10%;
@@ -305,7 +306,7 @@ function fillString(num: number) {
     }
 
     .music-top {
-      height: 55%;
+      height: 60%;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -396,7 +397,7 @@ function fillString(num: number) {
       margin: 10px auto;
       display: flex;
       flex-direction: column;
-      justify-content: space-evenly;
+      justify-content: space-around;
 
       .song-name {
         width: 100%;
